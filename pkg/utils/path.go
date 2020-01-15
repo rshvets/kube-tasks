@@ -7,12 +7,12 @@ import (
 )
 
 // GetFromAndToPathsFromK8s aggregates paths from all pods
-func GetFromAndToPathsFromK8s(iClient interface{}, pods []string, namespace, container, path, dstBasePath string) ([]skbn.FromToPair, error) {
+func GetFromAndToPathsFromK8s(iClient interface{}, pods []string, namespace, container, filter, path, dstBasePath string) ([]skbn.FromToPair, error) {
 	k8sClient := iClient.(*skbn.K8sClient)
 	var fromToPathsAllPods []skbn.FromToPair
 	for _, pod := range pods {
 
-		fromToPaths, err := GetFromAndToPathsK8sToDst(k8sClient, namespace, pod, container, path, dstBasePath)
+		fromToPaths, err := GetFromAndToPathsK8sToDst(k8sClient, namespace, pod, container, filter, path, dstBasePath)
 		if err != nil {
 			return nil, err
 		}
@@ -23,12 +23,12 @@ func GetFromAndToPathsFromK8s(iClient interface{}, pods []string, namespace, con
 }
 
 // GetFromAndToPathsK8sToDst performs a path mapping between Kubernetes and a destination
-func GetFromAndToPathsK8sToDst(k8sClient interface{}, namespace, pod, container, path, dstBasePath string) ([]skbn.FromToPair, error) {
+func GetFromAndToPathsK8sToDst(k8sClient interface{}, namespace, pod, container, filter, path, dstBasePath string) ([]skbn.FromToPair, error) {
 	var fromToPaths []skbn.FromToPair
 
 	pathPrfx := filepath.Join(namespace, pod, container, path)
 
-	relativePaths, err := skbn.GetListOfFilesFromK8s(k8sClient, pathPrfx, "f", "*")
+	relativePaths, err := skbn.GetListOfFilesFromK8s(k8sClient, pathPrfx, filter, "f", "*")
 	if err != nil {
 		return nil, err
 	}
