@@ -40,6 +40,7 @@ type simpleBackupCmd struct {
 	namespace  string
 	selector   string
 	container  string
+	filter     string
 	path       string
 	dst        string
 	parallel   int
@@ -58,7 +59,7 @@ func NewSimpleBackupCmd(out io.Writer) *cobra.Command {
 		Short: "Backup files to cloud storage",
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
-			if _, err := kubetasks.SimpleBackup(b.namespace, b.selector, b.container, b.path, b.dst, b.parallel, b.tag, b.bufferSize); err != nil {
+			if _, err := kubetasks.SimpleBackup(b.namespace, b.selector, b.container, b.filter, b.path, b.dst, b.parallel, b.tag, b.bufferSize); err != nil {
 				log.Fatal(err)
 			}
 		},
@@ -68,6 +69,7 @@ func NewSimpleBackupCmd(out io.Writer) *cobra.Command {
 	f.StringVarP(&b.namespace, "namespace", "n", "", "namespace to find pods")
 	f.StringVarP(&b.selector, "selector", "l", "", "selector to filter on")
 	f.StringVarP(&b.container, "container", "c", "", "container name to act on")
+	f.StringVarP(&b.filter, "filter", "f", "", "regexp to exclude files from backup")
 	f.StringVar(&b.path, "path", "", "path to act on")
 	f.StringVar(&b.dst, "dst", "", "destination to backup to. Example: s3://bucket/backup")
 	f.IntVarP(&b.parallel, "parallel", "p", 1, "number of files to copy in parallel. set this flag to 0 for full parallelism")

@@ -13,7 +13,7 @@ import (
 )
 
 // SimpleBackup performs backup
-func SimpleBackup(namespace, selector, container, path, dst string, parallel int, tag string, bufferSize float64) (string, error) {
+func SimpleBackup(namespace, selector, container, filter, path, dst string, parallel int, tag string, bufferSize float64) (string, error) {
 	log.Println("Backup started!")
 	dstPrefix, dstPath := utils.SplitInTwo(dst, "://")
 	dstPath = filepath.Join(dstPath, tag)
@@ -35,7 +35,7 @@ func SimpleBackup(namespace, selector, container, path, dst string, parallel int
 	}
 
 	log.Println("Calculating paths. This may take a while...")
-	fromToPathsAllPods, err := utils.GetFromAndToPathsFromK8s(k8sClient, pods, namespace, container, path, dstPath)
+	fromToPathsAllPods, err := utils.GetFromAndToPathsFromK8s(k8sClient, pods, namespace, container, filter, path, dstPath)
 	if err != nil {
 		return "", err
 	}
